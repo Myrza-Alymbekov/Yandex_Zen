@@ -1,6 +1,8 @@
 .idea/
 venv/
-db.sqlite3
-Архив.zip
-
+app/entrypoint.prod.sh
+app/entrypoint.sh
+app/db.sqlite3
+.env.prod
+.env.prod.db
 
