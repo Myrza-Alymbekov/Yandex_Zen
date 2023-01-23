@@ -1,6 +1,5 @@
 from django.db import IntegrityError
 from rest_framework import serializers
-
 from .models import Post, Comment, Status
 
 
@@ -19,6 +18,14 @@ class CommentSerializer(serializers.ModelSerializer):
         model = Comment
         fields = '__all__'
         read_only_fields = ['author', 'post']
+
+
+# class CommentSerializerWithoutUser(serializers.ModelSerializer):
+#
+#     class Meta:
+#         model = Comment
+#         fields = '__all__'
+#         read_only_fields = ['author', 'post']
 
 
 class StatusSerializer(serializers.ModelSerializer):

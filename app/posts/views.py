@@ -1,10 +1,11 @@
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import generics, viewsets, status
+from rest_framework import generics, viewsets, status, request
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAdminUser
 
 import telebot
+import os
 from rest_framework.response import Response
 
 from accounts.models import Author
@@ -12,7 +13,7 @@ from .models import Post, Comment, Status
 from .permissions import IsStaffOrOwnerPermission, StatusOrReadOnlyPermission
 from .serializers import PostSerializer, CommentSerializer, StatusSerializer
 
-bot = telebot.TeleBot('5607209879:AAEkLq6k2EPEdLzwE4J14mj1REdEIXqjg3Q', parse_mode=None)
+bot = telebot.TeleBot(os.environ.get('TOKEN'), parse_mode=None)
 
 
 class PostPagePagination(PageNumberPagination):
@@ -25,6 +26,9 @@ def send_telegram_message(chat_id_list, message):
 
 
 class PostViewSet(generics.ListCreateAPIView):
+    """
+        API для просмотра и создания постов
+    """
     queryset = Post.objects.all()
     serializer_class = PostSerializer
     permission_classes = [IsStaffOrOwnerPermission, ]
@@ -48,15 +52,21 @@ class PostViewSet(generics.ListCreateAPIView):
 
 
 class PostRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
+    """
+        API для детального просмотра, изменения и удаления постов
+    """
     queryset = Post.objects.all()
     serializer_class = PostSerializer
     permission_classes = [IsStaffOrOwnerPermission, ]
 
 
 class CommentListCreateAPIView(generics.ListCreateAPIView):
+    """
+        API для просмотра и создания комментариев к постам
+    """
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
-    permission_classes = [IsStaffOrOwnerPermission, ]
+    # permission_classes = [IsStaffOrOwnerPermission, ]
     pagination_class = PostPagePagination
 
     def get_queryset(self):
@@ -70,6 +80,9 @@ class CommentListCreateAPIView(generics.ListCreateAPIView):
 
 
 class CommentRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
+    """
+        API для детального просмотра, изменения и удаления комментариев
+    """
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
     permission_classes = [IsStaffOrOwnerPermission, ]
@@ -85,6 +98,9 @@ class CommentRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
 
 
 class StatusListCreateAPIView(generics.ListCreateAPIView):
+    """
+        API для просмотра и создания оценок к постам
+    """
     queryset = Status.objects.all()
     serializer_class = StatusSerializer
     permission_classes = [StatusOrReadOnlyPermission, ]
@@ -100,6 +116,9 @@ class StatusListCreateAPIView(generics.ListCreateAPIView):
 
 
 class StatusRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
+    """
+        API для детального просмотра, изменения и удаления оценок
+    """
     queryset = Status.objects.all()
     serializer_class = StatusSerializer
     permission_classes = [StatusOrReadOnlyPermission, ]
